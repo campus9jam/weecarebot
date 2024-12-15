@@ -1,0 +1,23 @@
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    background-color: #4B0082; /* Dark Violet */
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.section {
+    margin: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.btn-custom {
+    background-color: #6a0dad; /* Lighter Violet */
+    color: white;
+}
