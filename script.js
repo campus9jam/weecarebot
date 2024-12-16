@@ -1,3 +1,31 @@
+// Simulated database for users
+const users = [];
+
+// Registration logic
+document.getElementById('registrationForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent form submission
+
+    const role = document.getElementById('role').value;
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    // Create a new user object
+    const newUser = {
+        role: role,
+        name: name,
+        email: email,
+        password: password // In a real app, do not store plain passwords
+    };
+
+    // Simulate saving the user data (in practice, this would be sent to a server)
+    users.push(newUser);
+    alert(`Registered successfully!\nRole: ${role}\nName: ${name}\nEmail: ${email}`);
+
+    // Reset the form
+    document.getElementById('registrationForm').reset();
+});
+
 function bookAppointment() {
     const doctor = prompt("Enter the doctor's name you want to book an appointment with:");
     const date = prompt("Enter the date for the appointment (YYYY-MM-DD):");
@@ -20,34 +48,4 @@ function startConsultation() {
 
 function setReminder() {
     const medication = prompt("Enter the medication name:");
-    const time = prompt("Enter the time for the reminder (HH:MM):");
-    if (medication && time) {
-        alert(`Reminder set for ${medication} at ${time}.`);
-    } else {
-        alert("Reminder setting cancelled.");
-    }
-}
-
-function viewArticles() {
-    const articles = [
-        { title: "Understanding Telehealth", url: "https://example.com/telehealth" },
-        { title: "Benefits of Online Consultations", url: "https://example.com/benefits" },
-        { title: "Medication Management Tips", url: "https://example.com/medication" }
-    ];
-    let articleList = "Available Articles:\n";
-    articles.forEach((article, index) => {
-        articleList += `${index + 1}. ${article.title} - ${article.url}\n`;
-    });
-    alert(articleList);
-}
-
-function manageContacts() {
-    const contacts = [];
-    let contact;
-    while (true) {
-        contact = prompt("Enter an emergency contact name (or type 'done' to finish):");
-        if (contact.toLowerCase() === 'done') break;
-        contacts.push(contact);
-    }
-    alert("Emergency contacts: " + contacts.join(", ") || "No contacts added.");
-}
+    const time = prompt("
