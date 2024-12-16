@@ -1,6 +1,7 @@
 body {
     background-color: #f8f9fa;
     font-family: Arial, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .header {
@@ -25,4 +26,15 @@ body {
 
 .btn-custom:hover {
     background-color: #4B0082; /* Darker Violet on hover */
+}
+
+/* Dark Mode Styles */
+.dark-mode {
+    background-color: #343a40;
+    color: white;
+}
+
+.dark-mode .section {
+    background: #495057;
+    color: white;
 }
