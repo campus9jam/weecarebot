@@ -2,142 +2,181 @@
 let tg = window.Telegram.WebApp;
 tg.expand();
 
-// Global variables
+// Global Variables
 let currentUser = null;
-let currentRole = null;
+let currentTab = 'home';
+let healthScore = 85; // Default health score
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
-    checkUserRole();
-    setupMainButton();
+    initializeApp();
+    loadUserData();
+    updateHealthScore();
+    loadDoctors();
+    setupNotifications();
 });
 
-// Menu Functions
-function toggleMenu() {
-    const menuOverlay = document.getElementById('menuOverlay');
-    menuOverlay.style.display = menuOverlay.style.display === 'block' ? 'none' : 'block';
-    if (menuOverlay.style.display === 'block') {
-        setTimeout(() => {
-            menuOverlay.classList.add('active');
-        }, 10);
+// App Initialization
+function initializeApp() {
+    switchTab('home');
+    setupEventListeners();
+    checkAuthStatus();
+}
+
+// Authentication & User Management
+function checkAuthStatus() {
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+        currentUser = JSON.parse(userData);
+        updateUIForUser();
     } else {
-        menuOverlay.classList.remove('active');
+        showLoginPrompt();
     }
 }
 
-function navigateTo(section) {
-    toggleMenu();
-    // Handle navigation logic here
-    switch(section) {
-        case 'dashboard':
-            showMainContent();
-            break;
-        case 'profile':
-            openFeature('profile');
-            break;
-        case 'settings':
-            openFeature('settings');
-            break;
+function updateUIForUser() {
+    const userName = document.getElementById('userName');
+    const userRole = document.getElementById('userRole');
+    if (currentUser) {
+        userName.textContent = currentUser.name;
+        userRole.textContent = currentUser.role;
     }
 }
 
-function logout() {
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userData');
-    location.reload();
+// Tab Management
+function switchTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Show selected tab
+    document.getElementById(tabName + 'Tab').classList.add('active');
+    
+    // Update navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Update current tab
+    currentTab = tabName;
+    
+    // Update bottom navigation
+    const navItem = document.querySelector(`.nav-item[onclick="switchTab('${tabName}')"]`);
+    if (navItem) navItem.classList.add('active');
 }
 
-// Role Selection
-function selectRole(role) {
-    currentRole = role;
-    let userData = {
-        role: role,
-        user_id: tg.initDataUnsafe?.user?.id,
-        timestamp: new Date().toISOString()
-    };
-
-    // Store user data
-    localStorage.setItem('userRole', role);
-    localStorage.setItem('userData', JSON.stringify(userData));
-
-    // Notify the Telegram bot
-    tg.sendData(JSON.stringify(userData));
-
-    showMainContent();
+// Health Score Management
+function updateHealthScore() {
+    const circle = document.querySelector('.circle');
+    const scoreText = document.querySelector('.score');
+    
+    // Calculate health score based on user data
+    calculateHealthScore().then(score => {
+        healthScore = score;
+        circle.style.strokeDasharray = `${score}, 100`;
+        scoreText.textContent = `${score}%`;
+    });
 }
 
-function checkUserRole() {
-    const savedRole = localStorage.getItem('userRole');
-    if (savedRole) {
-        currentRole = savedRole;
-        showMainContent();
-    }
+async function calculateHealthScore() {
+    // Implement health score calculation algorithm
+    // This is a placeholder implementation
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve(Math.floor(Math.random() * 20) + 80); // Random score between 80-100
+        }, 500);
+    });
 }
 
-function showMainContent() {
-    document.getElementById('roleSelection').classList.add('hidden');
-    document.getElementById('mainContent').classList.remove('hidden');
-}
-
-// Feature Management
-function openFeature(feature) {
-    const modal = document.getElementById('featureModal');
+// Appointments Management
+function showNewAppointmentForm() {
     const modalContent = document.getElementById('modalContent');
-    
-    // Clear previous content
-    modalContent.innerHTML = '';
-    
-    // Generate feature-specific content
-    switch(feature) {
-        case 'medications':
-            generateMedicationForm(modalContent);
-            break;
-        case 'prescriptions':
-            generatePrescriptionForm(modalContent);
-            break;
-        case 'payments':
-            generatePaymentForm(modalContent);
-            break;
-        case 'records':
-            generateMedicalRecords(modalContent);
-            break;
-        case 'teleconsult':
-            generateTeleconsultForm(modalContent);
-            break;
-        case 'notifications':
-            generateNotificationSettings(modalContent);
-            break;
-        case 'profile':
-            generateProfileForm(modalContent);
-            break;
-        case 'settings':
-            generateSettingsForm(modalContent);
-            break;
-    }
-    
-    modal.style.display = 'block';
-}
-
-function closeModal() {
-    document.getElementById('featureModal').style.display = 'none';
-}
-
-// Feature-specific form generators
-function generateMedicationForm(container) {
-    container.innerHTML = `
-        <h2>Schedule Medication Reminder</h2>
-        <form onsubmit="handleMedicationSubmit(event)">
+    modalContent.innerHTML = `
+        <h2>Schedule New Appointment</h2>
+        <form onsubmit="handleAppointmentSubmit(event)">
             <div class="form-group">
-                <label>Medication Name</label>
-                <input type="text" required name="medName">
+                <label>Doctor</label>
+                <select name="doctor" required>
+                    <option value="">Select Doctor</option>
+                    ${generateDoctorOptions()}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" name="date" required min="${new Date().toISOString().split('T')[0]}">
+            </div>
+            <div class="form-group">
+                <label>Time</label>
+                <input type="time" name="time" required>
+            </div>
+            <div class="form-group">
+                <label>Reason for Visit</label>
+                <textarea name="reason" required></textarea>
+            </div>
+            <button type="submit" class="btn-primary">Schedule Appointment</button>
+        </form>
+    `;
+    showModal();
+}
+
+function handleAppointmentSubmit(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const appointmentData = {
+        doctor: formData.get('doctor'),
+        date: formData.get('date'),
+        time: formData.get('time'),
+        reason: formData.get('reason'),
+        userId: currentUser.id
+    };
+    
+    // Send to Telegram Bot
+    tg.sendData(JSON.stringify({
+        action: 'new_appointment',
+        data: appointmentData
+    }));
+    
+    closeModal();
+    showNotification('Appointment scheduled successfully!');
+}
+
+// Prescription Management
+function showUploadPrescription() {
+    const modalContent = document.getElementById('modalContent');
+    modalContent.innerHTML = `
+        <h2>Upload Prescription</h2>
+        <form onsubmit="handlePrescriptionUpload(event)">
+            <div class="form-group">
+                <label>Upload Image/PDF</label>
+                <input type="file" accept="image/*,.pdf" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" required></textarea>
+            </div>
+            <button type="submit" class="btn-primary">Upload</button>
+        </form>
+    `;
+    showModal();
+}
+
+function showManualEntry() {
+    const modalContent = document.getElementById('modalContent');
+    modalContent.innerHTML = `
+        <h2>Add Medication</h2>
+        <form onsubmit="handleMedicationEntry(event)">
+            <div class="form-group">
+                <label>Medicine Name</label>
+                <input type="text" name="medicine" required>
             </div>
             <div class="form-group">
                 <label>Dosage</label>
-                <input type="text" required name="dosage">
+                <input type="text" name="dosage" required>
             </div>
             <div class="form-group">
-                <label>Frequency</label>
-                <select name="frequency" required>
+                <label>Schedule</label>
+                <select name="schedule" required>
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
                     <option value="monthly">Monthly</option>
@@ -145,128 +184,125 @@ function generateMedicationForm(container) {
             </div>
             <div class="form-group">
                 <label>Time</label>
-                <input type="time" required name="time">
+                <input type="time" name="time" required>
             </div>
-            <button type="submit" class="btn">Schedule Reminder</button>
+            <button type="submit" class="btn-primary">Add Medication</button>
         </form>
     `;
+    showModal();
 }
 
-function generatePrescriptionForm(container) {
-    container.innerHTML = `
-        <h2>Prescription Management</h2>
-        <div class="form-group">
-            <label>Upload Prescription</label>
-            <input type="file" accept="image/*,.pdf" onchange="handlePrescriptionUpload(event)">
-        </div>
-        <div id="prescriptionsList">
-            <!-- Prescriptions will be listed here -->
-        </div>
-    `;
-}
-
-function generatePaymentForm(container) {
-    container.innerHTML = `
-        <h2>Payment Processing</h2>
-        <form onsubmit="handlePaymentSubmit(event)">
-            <div class="form-group">
-                <label>Amount</label>
-                <input type="number" required name="amount">
-            </div>
-            <div class="form-group">
-                <label>Purpose</label>
-                <select name="purpose" required>
-                    <option value="consultation">Consultation</option>
-                    <option value="medication">Medication</option>
-                    <option value="test">Medical Test</option>
-                </select>
-            </div>
-            <button type="submit" class="btn">Process Payment</button>
-        </form>
-    `;
-}
-
-// Event Handlers
-function handleMedicationSubmit(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const medicationData = {
-        name: formData.get('medName'),
-        dosage: formData.get('dosage'),
-        frequency: formData.get('frequency'),
-        time: formData.get('time')
+// Emergency Services
+function callEmergency(service) {
+    const services = {
+        ambulance: '911',
+        police: '911',
+        fire: '911'
     };
     
-    // Send to Telegram Bot
-    tg.sendData(JSON.stringify({
-        action: 'medication_reminder',
-        data: medicationData
-    }));
+    const phone = services[service];
+    window.location.href = `tel:${phone}`;
     
-    closeModal();
+    // Log emergency call
+    tg.sendData(JSON.stringify({
+        action: 'emergency_call',
+        service: service,
+        timestamp: new Date().toISOString()
+    }));
 }
 
-function handlePrescriptionUpload(event) {
-    const file = event.target.files[0];
-    if (file) {
-        // Handle file upload
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            // Send to Telegram Bot
-            tg.sendData(JSON.stringify({
-                action: 'prescription_upload',
-                data: {
-                    filename: file.name,
-                    content: e.target.result
-                }
-            }));
-        };
-        reader.readAsDataURL(file);
+function showAddContactForm() {
+    const modalContent = document.getElementById('modalContent');
+    modalContent.innerHTML = `
+        <h2>Add Emergency Contact</h2>
+        <form onsubmit="handleAddContact(event)">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="form-group">
+                <label>Relationship</label>
+                <input type="text" name="relationship" required>
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" name="phone" required>
+            </div>
+            <button type="submit" class="btn-primary">Add Contact</button>
+        </form>
+    `;
+    showModal();
+}
+
+// Utility Functions
+function showModal() {
+    document.getElementById('modal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+}
+
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Data Loading Functions
+function loadDoctors() {
+    // Implement doctor loading logic
+    const doctors = [
+        { name: 'Dr. Smith', specialty: 'Cardiology', rating: 4.8 },
+        { name: 'Dr. Johnson', specialty: 'Pediatrics', rating: 4.9 },
+        { name: 'Dr. Williams', specialty: 'Dermatology', rating: 4.7 }
+        // Add more doctors as needed
+    ];
+    
+    const carousel = document.querySelector('.doctors-carousel');
+    carousel.innerHTML = doctors.map(doctor => `
+        <div class="doctor-card">
+            <img src="https://via.placeholder.com/100" alt="${doctor.name}">
+            <h3>${doctor.name}</h3>
+            <p>${doctor.specialty}</p>
+            <div class="rating">★ ${doctor.rating}</div>
+        </div>
+    `).join('');
+}
+
+// Event Listeners
+function setupEventListeners() {
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        if (event.target.className === 'modal') {
+            closeModal();
+        }
+    };
+    
+    // Handle menu toggle
+    document.querySelector('.menu-btn').addEventListener('click', toggleMenu);
+}
+
+// Menu Functions
+function toggleMenu() {
+    const menuOverlay = document.getElementById('menuOverlay');
+    menuOverlay.style.display = menuOverlay.style.display === 'block' ? 'none' : 'block';
+}
+
+// Notifications
+function setupNotifications() {
+    if ('Notification' in window) {
+        Notification.requestPermission();
     }
 }
 
-function handlePaymentSubmit(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const paymentData = {
-        amount: formData.get('amount'),
-        purpose: formData.get('purpose')
-    };
-    
-    // Send to Telegram Bot
-    tg.sendData(JSON.stringify({
-        action: 'process_payment',
-        data: paymentData
-    }));
-    
-    closeModal();
-}
-
-// Main Button Setup
-function setupMainButton() {
-    tg.MainButton.setParams({
-        text: 'CLOSE APP',
-        color: '#7B1FA2'
-    });
-    
-    tg.MainButton.onClick(() => {
-        tg.close();
-    });
-}
-
-// Error Handling
-function showError(message) {
-    const error = document.createElement('div');
-    error.className = 'error-message';
-    error.textContent = message;
-    document.body.appendChild(error);
-    setTimeout(() => error.remove(), 3000);
-}
-
-// Window click event to close modal
-window.onclick = function(event) {
-    const modal = document.getElementById('featureModal');
-    if (event.target === modal) {
-        closeModal();
-    }
-};
+// Initialize Main Button
+tg.MainButton.setText('CLOSE APP');
+tg.MainButton.onClick(() => {
+    tg.close();
+});
