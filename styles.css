@@ -1,5 +1,6 @@
 :root {
     --primary: #4A148C;
+    --primary-light: #7c43bd;
     --secondary: #7B1FA2;
     --accent: #E1BEE7;
     --success: #00C851;
@@ -10,6 +11,7 @@
     --bg-light: #F5F5F5;
     --card-bg: rgba(255, 255, 255, 0.1);
     --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
 }
 
 * {
@@ -23,205 +25,69 @@ body {
     background: var(--primary);
     color: var(--text-light);
     min-height: 100vh;
-    padding-bottom: 70px;
+    padding: 60px 0 70px 0; /* Space for top and bottom nav */
 }
 
-/* Navbar Styles */
-.navbar {
+/* Navigation Bars */
+.top-nav {
     position: fixed;
     top: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
+    left: 0;
+    right: 0;
+    height: 60px;
     background: var(--secondary);
-    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
     z-index: 1000;
+    box-shadow: var(--shadow);
 }
 
-.logo h1 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    background: linear-gradient(45deg, #fff, var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.menu-btn {
-    font-size: 1.5rem;
+.back-btn, .menu-btn {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 1.2rem;
+    padding: 0.5rem;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    transition: var(--transition);
 }
 
-.menu-btn:hover {
+.back-btn:hover, .menu-btn:hover {
+    color: var(--accent);
     transform: scale(1.1);
 }
 
-/* Main Container */
-.main-container {
-    margin-top: 70px;
-    padding: 20px;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* Tab Styles */
-.tab-content {
-    display: none;
-    animation: fadeIn 0.3s ease;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-/* Home Tab */
-.mission-section,
-.vision-section {
-    background: var(--card-bg);
-    padding: 2rem;
-    border-radius: 15px;
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-.services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin: 2rem 0;
-}
-
-.service-card {
-    background: var(--card-bg);
-    padding: 2rem;
-    border-radius: 15px;
-    text-align: center;
-    transition: transform 0.3s ease;
-}
-
-.service-card:hover {
-    transform: translateY(-5px);
-}
-
-.service-card i {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    color: var(--accent);
-}
-
-/* Doctors Carousel */
-.doctors-carousel {
-    display: flex;
-    overflow-x: auto;
-    padding: 1.5rem 0;
-    scroll-snap-type: x mandatory;
-    gap: 1.5rem;
-}
-
-.doctor-card {
-    min-width: 250px;
-    background: var(--card-bg);
-    border-radius: 15px;
-    padding: 1.5rem;
-    scroll-snap-align: start;
-}
-
-.doctor-card img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-bottom: 1rem;
-}
-
-/* Emergency Buttons */
-.emergency-buttons {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin: 2rem 0;
-}
-
-.emergency-btn {
-    padding: 1.5rem;
-    border: none;
-    border-radius: 15px;
-    color: var(--text-light);
+.page-title {
     font-size: 1.2rem;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.emergency-btn.ambulance { background: var(--danger); }
-.emergency-btn.police { background: var(--primary); }
-.emergency-btn.fire { background: var(--warning); }
-
-.emergency-btn:hover {
-    transform: scale(1.05);
-}
-
-/* Dashboard */
-.health-score {
-    text-align: center;
-    margin: 2rem 0;
-}
-
-.score-circle {
-    width: 200px;
-    margin: 0 auto;
-}
-
-.circular-chart {
-    width: 100%;
-    height: auto;
-}
-
-.circle-bg {
-    fill: none;
-    stroke: var(--card-bg);
-    stroke-width: 3.8;
-}
-
-.circle {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 2.8;
-    stroke-linecap: round;
-    transition: stroke-dasharray 0.3s ease;
-}
-
-.score {
-    fill: var(--text-light);
-    font-size: 0.5em;
-    text-anchor: middle;
-}
-
-/* Bottom Navigation */
 .bottom-nav {
     position: fixed;
     bottom: 0;
-    width: 100%;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: var(--secondary);
     display: flex;
     justify-content: space-around;
-    background: var(--secondary);
-    padding: 0.8rem;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    align-items: center;
     z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
 }
 
 .nav-item {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 0.5rem;
     color: var(--text-light);
     opacity: 0.7;
-    transition: 0.3s ease;
+    transition: var(--transition);
     cursor: pointer;
 }
 
@@ -236,18 +102,254 @@ body {
 }
 
 .nav-item span {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
 }
 
-/* Forms and Tables */
+/* Page Container and Service Pages */
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+    overflow-x: hidden;
+}
+
+.service-page {
+    animation: fadeIn 0.3s ease;
+}
+
+.service-page.hidden {
+    display: none;
+}
+
+/* Home Page Styles */
+.hero-section {
+    text-align: center;
+    padding: 2rem 1rem;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    border-radius: 15px;
+    margin-bottom: 2rem;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.service-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    background: var(--primary-light);
+}
+
+.service-card i {
+    font-size: 2rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
+
+/* Appointments Page Styles */
+.appointments-filters {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+.filter-btn {
+    background: var(--card-bg);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    color: var(--text-light);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: var(--transition);
+}
+
+.filter-btn.active {
+    background: var(--accent);
+    color: var(--primary);
+}
+
+.appointments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.appointment-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Prescriptions Page Styles */
+.medications-timeline {
+    margin: 2rem 0;
+}
+
+.timeline-container {
+    position: relative;
+    padding: 1rem 0;
+}
+
+.timeline-container::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--accent);
+}
+
+.medication-item {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+}
+
+.medication-item::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    transform: translateY(-50%);
+}
+
+/* Emergency Page Styles */
+.emergency-actions {
+    display: grid;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.emergency-btn {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border: none;
+    border-radius: 15px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.emergency-btn.ambulance { background: var(--danger); }
+.emergency-btn.police { background: var(--primary-light); }
+.emergency-btn.fire { background: var(--warning); }
+
+.emergency-btn i {
+    font-size: 2rem;
+    grid-row: span 2;
+}
+
+.emergency-btn span {
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: left;
+}
+
+.emergency-btn small {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    text-align: left;
+}
+
+/* Doctors Page Styles */
+.doctors-search {
+    margin: 1rem 0;
+}
+
+.doctors-search input {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 10px;
+    background: var(--card-bg);
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.specialty-filters {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+.doctors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--secondary);
+    width: 90%;
+    max-width: 500px;
+    border-radius: 15px;
+    animation: slideUp 0.3s ease;
+}
+
+.modal-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--card-bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-body {
+    padding: 1rem;
+}
+
+/* Form Styles */
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: var(--text-light);
 }
 
 .form-group input,
@@ -255,53 +357,10 @@ body {
 .form-group textarea {
     width: 100%;
     padding: 0.8rem;
-    border: 1px solid var(--accent);
+    border: 1px solid var(--card-bg);
     border-radius: 8px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     color: var(--text-light);
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1rem 0;
-    background: var(--card-bg);
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-th, td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-th {
-    background: var(--secondary);
-    font-weight: 600;
-}
-
-/* Modals */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.8);
-    z-index: 2000;
-}
-
-.modal-content {
-    position: relative;
-    background: var(--secondary);
-    margin: 5% auto;
-    padding: 2rem;
-    width: 90%;
-    max-width: 600px;
-    border-radius: 15px;
-    animation: slideUp 0.3s ease;
 }
 
 /* Animations */
@@ -311,61 +370,53 @@ th {
 }
 
 @keyframes slideUp {
-    from { transform: translateY(50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from { 
+        transform: translate(-50%, 100%);
+        opacity: 0;
+    }
+    to { 
+        transform: translate(-50%, -50%);
+        opacity: 1;
+    }
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .navbar {
+    .service-card {
         padding: 1rem;
     }
 
-    .main-container {
-        padding: 15px;
-    }
-
-    .services-grid {
-        grid-template-columns: 1fr;
+    .emergency-btn {
+        padding: 1rem;
     }
 
     .modal-content {
         width: 95%;
-        margin: 10% auto;
-    }
-
-    .bottom-nav {
-        padding: 0.5rem;
-    }
-
-    .nav-item i {
-        font-size: 1.2rem;
-    }
-
-    .nav-item span {
-        font-size: 0.7rem;
     }
 }
 
 /* Utility Classes */
-.btn-primary {
-    background: var(--accent);
-    color: var(--primary);
-    padding: 0.8rem 1.5rem;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
+.hidden {
+    display: none !important;
 }
 
-.btn-primary:hover {
+.action-btn {
+    background: var(--accent);
+    color: var(--primary);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.action-btn:hover {
     transform: scale(1.05);
 }
 
-.hidden {
-    display: none;
-}
-
-.text-center {
-    text-align: center;
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
 }
