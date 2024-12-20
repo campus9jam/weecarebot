@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeCare Services</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav">
+        <button class="back-btn" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <div class="page-title">WeCare</div>
+        <button class="menu-btn" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i> Menu
+        </button>
+    </nav>
+
+    <!-- Service Pages Container -->
+    <div class="page-container">
+        <!-- Home Page -->
+        <div id="homePage" class="service-page">
+            <!-- Home page content -->
+        </div>
+
+        <!-- Appointments Page -->
+        <div id="appointmentsPage" class="service-page hidden">
+            <!-- Appointments page content -->
+        </div>
+
+        <!-- Prescriptions Page -->
+        <div id="prescriptionsPage" class="service-page hidden">
+            <!-- Prescriptions page content -->
+        </div>
+
+        <!-- Emergency Page -->
+        <div id="emergencyPage" class="service-page hidden">
+            <!-- Emergency page content -->
+        </div>
+
+        <!-- Doctors Page -->
+        <div id="doctorsPage" class="service-page hidden">
+            <!-- Doctors page content -->
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="navigateToService('home')">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </div>
+        <div class="nav-item" onclick="navigateToService('appointments')">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Appointments</span>
+        </div>
+        <div class="nav-item" onclick="navigateToService('prescriptions')">
+            <i class="fas fa-prescription-bottle-alt"></i>
+            <span>Prescriptions</span>
+        </div>
+        <div class="nav-item" onclick="navigateToService('emergency')">
+            <i class="fas fa-first-aid"></i>
+            <span>Emergency</span>
+        </div>
+        <div class="nav-item" onclick="navigateToService('doctors')">
+            <i class="fas fa-user-md"></i>
+            <span>Doctors</span>
+        </div>
+    </nav>
+
+    <!-- Modals -->
+    <!-- Appointment Modal -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Schedule Appointment</h3>
+                <button class="close-btn" onclick="closeModal('appointmentModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Appointment form -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Prescription Upload Modal -->
+    <div id="prescriptionModal" class="modal">
+        <!-- Prescription upload modal content -->
+    </div>
+
+    <!-- Add Medication Modal -->
+    <div id="medicationModal" class="modal">
+        <!-- Add medication modal content -->
+    </div>
+
+    <!-- Add Contact Modal -->
+    <div id="contactModal" class="modal">
+        <!-- Add contact modal content -->
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
